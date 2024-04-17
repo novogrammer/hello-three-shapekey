@@ -54,7 +54,7 @@ async function mainAsync(){
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 1000);
   camera.position.z=5;
 
-  function render(time: DOMHighResTimeStamp, frame: XRFrame){
+  function render(time: DOMHighResTimeStamp, _frame: XRFrame){
     // mixer.setTime(0);
     if(mesh && mesh.morphTargetInfluences){
       mesh.morphTargetInfluences[0]=Math.sin(time/1000*0.3)*0.5+0.5;
