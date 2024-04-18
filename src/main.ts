@@ -33,17 +33,30 @@ async function mainAsync(){
   //   cube.lookAt(new THREE.Vector3(1,1,1));
   // }
 
-  let mesh:THREE.Mesh;
+  let mesh:THREE.Mesh|null=null;
+  let mixer:THREE.AnimationMixer|null=null;
   {
     const loader=new GLTFLoader();
-    const gltf=await loader.loadAsync("./models/test_shapekey.glb");
+    const gltf=await loader.loadAsync("./models/shapekey.glb");
     gltf.scene.traverse((object3d)=>{
       if(object3d instanceof THREE.Mesh){
-        scene.add(object3d);
         mesh=object3d;
+        // TODO: いろいろ
       }
       
     });
+    const skeleton = new THREE.SkeletonHelper( gltf.scene );
+    skeleton.visible = true;
+    scene.add( skeleton );
+    mixer = new THREE.AnimationMixer( gltf.scene );
+    for(let clip of gltf.animations){
+      console.log(clip.name);
+      const action=mixer.clipAction(clip);
+      action.play();
+      console.log(action);
+    }
+
+    scene.add(gltf.scene);
 
     
     
@@ -59,6 +72,9 @@ async function mainAsync(){
     if(mesh && mesh.morphTargetInfluences){
       mesh.morphTargetInfluences[0]=Math.sin(time/1000*0.3)*0.5+0.5;
       mesh.morphTargetInfluences[1]=Math.sin(time/1000*0.5)*0.5+0.5;
+    }
+    if(mixer){
+      mixer.setTime(time/1000);
     }
 
     renderer.render(scene,camera);
